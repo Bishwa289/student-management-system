@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html xmlns:th="http:www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Student Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFy47IJ6iCw2rrncLM0tuDeOrq6LsLuA+I8mWV5jWgm7RRk9y2GARf1Jg" crossorigin="anonymous"></script>
+    <style>
+        /* Global Styles */
+        body {
+            background: linear-gradient(to bottom right, #ffffff, #d4d7dd);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .navbar {
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: white !important;
+        }
+
+        .container {
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            padding: 20px 30px;
+            max-width: 900px;
+            width: 100%;
+        }
+
+        .text-center h2 {
+            color: #0072ff;
+            font-weight: bold;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .text-center h2::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            margin: 10px auto 0;
+            border-radius: 2px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            border: none;
+            font-size: 0.9rem;
+            padding: 10px 15px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(42, 84, 204, 0.8);
+        }
+
+        .btn-update, .btn-delete {
+            padding: 8px 15px;
+            border-radius: 5px;
+            color: white;
+            font-weight: bold;
+            margin-right: 5px;
+        }
+
+        .btn-update {
+            background-color: #007bff;
+        }
+
+        .btn-update:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-delete {
+            background-color: #dc3545;
+        }
+
+        .btn-delete:hover {
+            background-color: #c82333;
+        }
+
+        .table {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .table th {
+            background: #0072ff;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+            padding: 15px;
+            border: none;
+        }
+
+        .table td {
+            text-align: center;
+            color: #555;
+            padding: 12px;
+        }
+
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: #f9f9f9;
+        }
+
+        .table-striped tbody tr:hover {
+            background-color: #f1f4f9;
+            transform: scale(1.01);
+            transition: all 0.2s ease;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 0.9rem;
+            color: #777;
+        }
+
+        /* Enhanced Search Bar Styling */
+        .search-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .search-bar {
+            width: 60%;
+            padding: 12px;
+            font-size: 1rem;
+            border-radius: 25px;
+            border: 2px solid #0072ff;
+            outline: none;
+            box-shadow: 0 0 10px rgba(0, 114, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .search-bar:focus {
+            border-color: #0056b3;
+            box-shadow: 0 0 15px rgba(0, 86, 179, 0.5);
+        }
+
+        .search-bar::placeholder {
+            color: #888;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-md navbar-dark">
+        <a class="navbar-brand" href="#">Student Management System</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="collapsibleNavbar">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" th:href="@{students}">Student Management</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container my-5">
+        <div class="text-center">
+            <h2>Student List</h2>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="search-container">
+            <input type="text" id="searchBar" class="search-bar" placeholder="Search by Name or Email" onkeyup="searchTable()">
+        </div>
+
+        <!-- Table -->
+        <table class="table table-striped table-bordered" id="studentTable">
+            <thead>
+                <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="student:${students}">
+                    <td th:text="${student.firstName}"></td>
+                    <td th:text="${student.lastName}"></td>
+                    <td th:text="${student.email}"></td>
+                    <td>
+                        <a th:href="@{students/edit/{id}(id=${student.id})}" class="btn-update">Update</a>
+                        <a th:href="@{students/{id}(id=${student.id})}" class="btn-delete">Delete</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="d-grid mt-4">
+            <button type="submit" class="btn btn-primary btn-lg">Submit</button>
+            <a href="/" class="btn btn-secondary btn-lg mt-3">Go to Homepage</a>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>&copy; 2024 Student Management System. All rights reserved.</p>
+    </div>
+
+    <script>
+        function searchTable() {
+            var input = document.getElementById('searchBar');
+            var filter = input.value.toLowerCase();
+            var table = document.getElementById('studentTable');
+            var rows = table.getElementsByTagName('tr');
+
+            for (var i = 1; i < rows.length; i++) {
+                var cells = rows[i].getElementsByTagName('td');
+                var firstName = cells[0].textContent || cells[0].innerText;
+                var lastName = cells[1].textContent || cells[1].innerText;
+                var email = cells[2].textContent || cells[2].innerText;
+
+                if (firstName.toLowerCase().indexOf(filter) > -1 || 
+                    lastName.toLowerCase().indexOf(filter) > -1 || 
+                    email.toLowerCase().indexOf(filter) > -1) {
+                    rows[i].style.display = "";
+                } else {
+                    rows[i].style.display = "none";
+                }
+            }
+        }
+    </script>
+
+</body>
+</html>
